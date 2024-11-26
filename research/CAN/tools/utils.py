@@ -104,9 +104,6 @@ def sorted_boxes(boxes):
 
 
 def eval_rec_res(rec_res_fp, gt_fp, lower=True, ignore_space=True, filter_ood=True, char_dict_path=None):
-    # gt_list = os.listdir(gt)
-    # res = Parallel(n_jobs=parallel_num, backend="multiprocessing")(delayed(eval_each_rec)
-    # (gt_file, gt, pred, eval_func) for gt_file in tqdm(gt_list))
 
     pred = []
     with open(rec_res_fp, "r") as fp:

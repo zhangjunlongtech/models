@@ -19,9 +19,6 @@ class CANLoss(LossBase):
 
         self.use_label_mask = False
         self.out_channel = 111
-        # self.cross = nn.CrossEntropyLoss(
-        #     reduction='none'
-        # ) if self.use_label_mask else nn.CrossEntropyLoss()
         self.cross = nn.CrossEntropyLoss(reduction='none') if self.use_label_mask else nn.CrossEntropyLoss()
         self.counting_loss = nn.SmoothL1Loss(reduction='mean')
         self.ratio = 16
@@ -38,30 +35,10 @@ class CANLoss(LossBase):
         counting_loss = (self.counting_loss(counting_preds1, counting_labels)
                          + self.counting_loss(counting_preds2, counting_labels)
                          + self.counting_loss(counting_preds, counting_labels))
-
-        print(f"counting_loss:{counting_loss}")
-        # word_probs = Tensor(word_probs, dtype=ms.float32)
-        # word_probs = Tensor(labels, dtype=int16)
-        # labels16 = labels.astype(np.int16)
         word_loss = self.cross(word_probs.view(-1, word_probs.shape[-1]), labels.view(-1))
-        # tmp1 = ops.reshape(word_probs1, [-1, word_probs1.shape[-1]])
-        # tmp2 = ops.reshape(labels, [-1,])
-
-        # word_loss = self.cross(
-        #     tmp1,
-        #     tmp2
-        #     # word_probs.contiguous().view(-1, word_probs.shape[-1]),
-        #     # labels.view(-1)
-        # )
-        # word_loss = self.cross(
-        #     paddle.reshape(word_probs, [-1, word_probs.shape[-1]]),
-        #     paddle.reshape(labels, [-1]),
-        # )
-        print(f"word_loss:{word_loss}")
         word_average_loss = (word_loss * labels_mask.view(-1)).sum() / (
             labels_mask.sum() + 1e-10
         ) if self.use_label_mask else word_loss
-        print(f"word_average_loss:{word_average_loss}")
         loss = word_average_loss + counting_loss
         return loss
 

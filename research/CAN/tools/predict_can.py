@@ -1,9 +1,5 @@
 """
 Text recognition inference
-
-Example:
-    $ python tools/infer/text/predict_rec.py  --image_dir {path_to_img} --rec_algorithm CRNN
-    $ python tools/infer/text/predict_rec.py  --image_dir {path_to_img} --rec_algorithm CRNN_CH
 """
 import logging
 import os
@@ -31,12 +27,6 @@ from mindocr.utils.visualize import show_imgs
 # map algorithm name to model name (which can be checked by `mindocr.list_models()`)
 # NOTE: Modify it to add new model for inference.
 algo_to_model_name = {
-    "CRNN": "crnn_resnet34",
-    "RARE": "rare_resnet34",
-    "CRNN_CH": "crnn_resnet34_ch",
-    "RARE_CH": "rare_resnet34_ch",
-    "SVTR": "svtr_tiny",
-    "SVTR_PPOCRv3_CH": "svtr_ppocrv3_ch",
     "CAN": "can"
 }
 logger = logging.getLogger("mindocr")
@@ -83,11 +73,6 @@ class TextRecognizer(object):
             amp_level = "O2"
         self.model = build_model(model_name, pretrained=pretrained, ckpt_load_path=ckpt_load_path, amp_level=amp_level)
 
-        # param_dict = {}
-        # for name, param in self.model.parameters_and_names():
-        #     param_dict.update({name : [param.shape, param[:5]]})
-            # print(f"Layer: {name}\nSize: {param.shape}\nValues : {param[:2]} \n")
-
         self.model.set_train(False)
         self.cast_pred_fp32 = amp_level != "O0"
         if self.cast_pred_fp32:
@@ -98,8 +83,6 @@ class TextRecognizer(object):
             )
         )
 
-        # build preprocess and postprocess
-        # NOTE: most process hyper-params should be set optimally for the pick algo.
         self.preprocess = Preprocessor(
             task="rec",
             algo=args.rec_algorithm,
@@ -108,8 +91,6 @@ class TextRecognizer(object):
             rec_batch_num=self.batch_num,
         )
 
-        # TODO: try GeneratorDataset to wrap preprocess transform on batch for possible speed-up.
-        #  if use_ms_dataset: ds = ms.dataset.GeneratorDataset(wrap_preprocess, ) in run_batchwise
         self.postprocess = Postprocessor(
             task="rec", algo=args.rec_algorithm, rec_char_dict_path=args.rec_char_dict_path
         )
@@ -198,10 +179,6 @@ class TextRecognizer(object):
             batch_begin = idx
             batch_end = min(idx + self.batch_num, num_imgs)
             logger.info(f"Rec img idx range: [{batch_begin}, {batch_end})")
-            # TODO: set max_wh_ratio to the maximum wh ratio of images in the batch. and update it for resize,
-            #  which may improve recognition accuracy in batch-mode
-            # especially for long text image. max_wh_ratio=max(max_wh_ratio, img_w / img_h).
-            # The short ones should be scaled with a.r. unchanged and padded to max width in batch.
 
             # preprocess
             # TODO: run in parallel with multiprocessing
@@ -228,7 +205,7 @@ class TextRecognizer(object):
             label = ops.ones((1, 36), dtype=ms.int64)
 
             image = ms.Tensor(img_batch)
-            # net_pred = self.model(image,image_mask,label)
+
             net_pred = self.model(image,image_mask,label)
             if self.cast_pred_fp32:
                 if isinstance(net_pred, list) or isinstance(net_pred, tuple):
@@ -240,8 +217,6 @@ class TextRecognizer(object):
             batch_res = self.postprocess(net_pred)
 
             rec_res = batch_res["texts"]
-
-            # rec_res.extend(list(zip(batch_res["texts"], batch_res["confs"])))
 
         return rec_res
 

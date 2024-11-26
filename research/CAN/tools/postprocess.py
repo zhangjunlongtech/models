@@ -9,7 +9,6 @@ from mindocr import build_postprocess
 
 class Postprocessor(object):
     def __init__(self, task="rec", algo="CAN", rec_char_dict_path=None, **kwargs):
-        # algo = algo.lower()
         if task == "rec" and algo.startswith("CAN"):
             postproc_cfg = dict(
                 name="CANLabelDecode",

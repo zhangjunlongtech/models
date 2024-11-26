@@ -79,34 +79,3 @@ class BaseModel(nn.Cell):
             hout = self.head(nout)
 
         return hout
-
-
-if __name__ == "__main__":
-    model_config = {
-        "backbone": {"name": "det_resnet50", "pretrained": False},
-        "neck": {
-            "name": "FPN",
-            "out_channels": 256,
-        },
-        "head": {"name": "ConvHead", "out_channels": 2, "k": 50},
-    }
-    model_config.pop("neck")
-    model = BaseModel(model_config)
-
-    import time
-
-    import numpy as np
-
-    import mindspore as ms
-
-    bs = 8
-    x = ms.Tensor(np.random.rand(bs, 3, 640, 640), dtype=ms.float32)
-    ms.set_context(mode=ms.PYNATIVE_MODE)
-
-    def predict(model, x):
-        start = time.time()
-        y = model(x)
-        print(time.time() - start)
-        print(y.shape)
-
-    predict(model, x)

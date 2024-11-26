@@ -23,11 +23,6 @@ class RecMetric(nn.Metric):
             ground truth text. Default is True.
         lower: convert GT text to lower case. Recommend to set True if the dictionary does not contains upper letters
         ignore_symbol: Ignore the symbols in the predictions
-
-    Notes:
-        Since the OOD characters are skipped during label encoding in data transformation by default,
-        filter_ood should be True. (Paddle skipped the OOD character in label encoding and then decoded the label
-        indices back to text string, which has no ood character.
     """
 
     def __init__(
@@ -56,7 +51,6 @@ class RecMetric(nn.Metric):
         if self.ignore_symbol:
             self.valid_symbol = re.compile(r"[^A-Z^a-z^0-9^\u4e00-\u9fa5]")
 
-        # TODO: use parsed dictionary object
         if character_dict_path is None:
             self.dict = [c for c in "0123456789abcdefghijklmnopqrstuvwxyz"]
         else:
@@ -93,12 +87,10 @@ class RecMetric(nn.Metric):
             raise ValueError("Length of inputs should be 2")
         preds, gt = inputs
         pred_texts = preds["texts"]
-        # pred_confs = preds['confs']
 
-        # remove padded chars in GT
         if isinstance(gt, tuple) or isinstance(gt, list):
-            gt_texts = gt[0]  # text string padded
-            gt_lens = gt[1]  # text length
+            gt_texts = gt[0]
+            gt_lens = gt[1]
 
             if isinstance(gt_texts, ms.Tensor):
                 gt_texts = gt_texts.asnumpy()
@@ -115,14 +107,13 @@ class RecMetric(nn.Metric):
                 pred = pred.replace(" ", "")
                 label = label.replace(" ", "")
 
-            if self.lower:  # convert to lower case
+            if self.lower:
                 label = label.lower()
                 pred = pred.lower()
 
-            if self.filter_ood:  # filter out of dictionary characters
+            if self.filter_ood:
                 label = "".join([c for c in label if c in self.dict])
 
-            # remove symbols
             if self.ignore_symbol:
                 label = self.valid_symbol.sub("", label)
                 pred = self.valid_symbol.sub("", pred)
@@ -143,7 +134,6 @@ class RecMetric(nn.Metric):
         _logger.info(f"correct num: {self._correct_num}, total num: {self._total_num}")
 
         if self.all_reduce:
-            # sum over all devices
             correct_num = self.all_reduce(self._correct_num)
             norm_edit_dis = self.all_reduce(self._norm_edit_dis)
             total_num = self.all_reduce(self._total_num)
@@ -156,15 +146,3 @@ class RecMetric(nn.Metric):
         norm_edit_distance = float((1 - norm_edit_dis / total_num).asnumpy())
 
         return {"acc": sequence_accurancy, "norm_edit_distance": norm_edit_distance}
-
-
-if __name__ == "__main__":
-    gt = ["ba xla la!    ", "ba       "]
-    gt_len = [len("ba xla la!"), len("ba")]
-
-    pred = ["balala", "ba"]
-
-    m = RecMetric()
-    m.update({"texts": pred}, (gt, gt_len))
-    acc = m.eval()
-    print(acc)

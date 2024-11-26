@@ -1,7 +1,5 @@
 __all__ = ['build_neck']
-supported_necks = [
-    'Select',
-]
+supported_necks = ['Select']
 
 from .select import Select
 

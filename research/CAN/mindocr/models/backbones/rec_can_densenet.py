@@ -9,8 +9,6 @@ from mindspore import nn
 from mindspore import ops
 from ._registry import register_backbone, register_backbone_class
 
-# ms.set_context(pynative_synchronize=True)
-
 __all__ = ['DenseNet']
 
 
@@ -27,7 +25,6 @@ class Bottleneck(nn.Cell):
             has_bias=True,
             pad_mode='pad',
             padding=0,
-            # dtype=ms.float16,
         )
         self.bn2 = nn.BatchNorm2d(growth_rate)
         self.conv2 = nn.Conv2d(
@@ -37,7 +34,6 @@ class Bottleneck(nn.Cell):
             has_bias=True,
             pad_mode='pad',
             padding=1,
-            # dtype=ms.float16,
         )
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
@@ -46,13 +42,11 @@ class Bottleneck(nn.Cell):
         out = self.conv1(x)
         out = self.bn1(out)
         out = F.relu(out)
-        # out = ops.relu(self.bn1(self.conv1(x)))
         if self.use_dropout:
             out = self.dropout(out)
         out = self.conv2(out)
         out = self.bn2(out)
         out = F.relu(out)
-        # out = ops.relu(self.bn2(self.conv2(out)))
         if self.use_dropout:
             out = self.dropout(out)
         out = ops.concat((x, out), 1)
@@ -93,7 +87,6 @@ class Transition(nn.Cell):
             out_channels,
             kernel_size=1,
             has_bias=False,
-            # dtype=ms.float16,
         )
         self.use_dropout = use_dropout
         self.dropout = nn.Dropout(p=0.2)
@@ -102,11 +95,9 @@ class Transition(nn.Cell):
         out = self.conv1(x)
         out = self.bn1(out)
         out = F.relu(out)
-        # out = ops.relu(self.bn1(self.conv1(x)))
 
         if self.use_dropout:
             out = self.dropout(out)
-        # out = ops.avg_pool2d(out, 2, stride=2, ceil_mode=True)
         out = F.avg_pool2d(out, 2, ceil_mode=True, count_include_pad=False)
         return out
 
@@ -155,7 +146,6 @@ class DenseNet(nn.Cell):
             has_bias=False,
             pad_mode='pad',
             padding=3,
-            # dtype=ms.float16,
         )
         self.dense1 = self.make_dense(
             n_channels, growth_rate, n_dense_blocks, bottleneck, use_dropout
@@ -200,13 +190,6 @@ class DenseNet(nn.Cell):
                 layers.append(SingleLayer(n_channels, growth_rate, use_dropout))
             n_channels += growth_rate
         return nn.SequentialCell(*layers)
-
-        # layers = []
-        # layer_constructor = Bottleneck if bottleneck else SingleLayer
-        # for _ in range(int(n_dense_blocks)):
-        #     layers.append(layer_constructor(n_channels, growth_rate, use_dropout))
-        #     n_channels += growth_rate
-        # return nn.SequentialCell(*layers)
 
 
 @register_backbone

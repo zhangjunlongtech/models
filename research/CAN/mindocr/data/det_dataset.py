@@ -41,14 +41,6 @@ class DetDataset(BaseDataset):
     Returns:
         data (tuple): Depending on the transform pipeline, __get_item__ returns a tuple for the specified data item.
         You can specify the `output_columns` arg to order the output data for dataloader.
-
-    Notes:
-        1. The data file structure should be like
-            ├── data_dir
-            │     ├── 000001.jpg
-            │     ├── 000002.jpg
-            │     ├── {image_file_name}
-            ├── label_file.txt
     """
 
     def __init__(

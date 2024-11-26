@@ -18,7 +18,6 @@ common:
   use_space_char: &use_space_char False
   batch_size: &batch_size 8
 
-
 model:
   type: rec
   transform: null
@@ -76,12 +75,6 @@ metric:
   ignore_space: True
   print_flag: False
   filter_ood: False
-
-# loss_scaler:
-#   type: dynamic
-#   loss_scale: 512
-#   scale_factor: 2.0
-#   scale_window: 1000
 
 train:
   ckpt_save_dir: './tmp_rec'

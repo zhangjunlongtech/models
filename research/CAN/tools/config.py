@@ -19,10 +19,10 @@ def str2bool(v):
 
 def create_parser():
     parser = argparse.ArgumentParser(description="Inference Config Args")
-    # params for prediction engine
-    parser.add_argument("--mode", type=int, default=0, help="0 for graph mode, 1 for pynative mode ")  # added
+
+    parser.add_argument("--mode", type=int, default=0, help="0 for graph mode, 1 for pynative mode ")
     parser.add_argument("--image_dir", type=str, required=True, help="image path or image directory")
-    # params for text recognizer
+
     parser.add_argument(
         "--rec_algorithm",
         type=str,
@@ -41,8 +41,8 @@ def create_parser():
         "--rec_model_dir",
         type=str,
         help="directory containing the recognition model checkpoint best.ckpt, or path to a specific checkpoint file.",
-    )  # determine the network weights
-    # parser.add_argument("--rec_image_inverse", type=str2bool, default=True)
+    )
+
     parser.add_argument(
         "--rec_image_shape",
         type=str,
@@ -57,7 +57,7 @@ def create_parser():
         default=True,
         help="Whether to run recognition inference in batch-mode, which is faster but may degrade the accuracy "
         "due to padding or resizing to the same shape.",
-    )  # added
+    )
     parser.add_argument("--rec_batch_num", type=int, default=8)
     parser.add_argument("--max_text_length", type=int, default=25)
     parser.add_argument(
@@ -66,8 +66,7 @@ def create_parser():
         default=None,
         help="path to character dictionary. If None, will pick according to rec_algorithm and red_model_dir.",
     )
-    # uncomment it after model trained supporting space recognition.
-    # parser.add_argument("--use_space_char", type=str2bool, default=True)
+
     parser.add_argument("--vis_font_path", type=str, default="docs/fonts/simfang.ttf")
     parser.add_argument("--drop_score", type=float, default=0.5)
 

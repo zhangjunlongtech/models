@@ -1,7 +1,5 @@
 __all__ = ['build_head']
-supported_heads = [
-    'CANHead',
-]
+supported_heads = ['CANHead']
 from .rec_can_head import CANHead
 
 

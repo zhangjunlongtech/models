@@ -6,8 +6,6 @@ import mindspore as ms
 from mindspore import nn
 from mindspore import ops
 
-ms.set_context(mode=ms.PYNATIVE_MODE, pynative_synchronize=True)
-
 
 class ChannelAtt(nn.Cell):
     """Channel Attention of the Counting Module"""
@@ -43,7 +41,6 @@ class CountingDecoder(nn.Cell):
                 pad_mode='pad',
                 padding=kernel_size // 2,
                 has_bias=False,
-                # dtype=ms.float16,
             ),
             nn.BatchNorm2d(512)
         ])
@@ -88,7 +85,6 @@ class Attention(nn.Cell):
             pad_mode='pad',
             padding=5,
             has_bias=False,
-            # dtype=ms.float16,
         )
         self.attention_weight = nn.Dense(512, self.attention_dim, has_bias=False)
         self.alpha_convert = nn.Dense(self.attention_dim, 1)
@@ -98,7 +94,6 @@ class Attention(nn.Cell):
     ):
         query = self.hidden_weight(hidden)
         alpha_sum_trans = self.attention_conv(alpha_sum)
-        # coverage_alpha = self.attention_weight(alpha_sum_trans.permute(0, 2, 3, 1))
         alpha_sum_trans_2 = ops.transpose(alpha_sum_trans,(0, 2, 3, 1))
         coverage_alpha = self.attention_weight(alpha_sum_trans_2) 
 
@@ -247,9 +242,7 @@ class AttDecoder(nn.Cell):
 
         word = ops.ones((batch_size, 1), dtype=ms.int64)
         word = ops.squeeze(word, axis=1)
-        # print(num_steps)
         for i in range(num_steps):
-            # print(i)
             word_embedding = self.embedding(word)
             hidden = self.word_input_gru(word_embedding, hidden)
             word_context_vec, _, word_alpha_sum = self.word_attention(
@@ -289,7 +282,6 @@ class AttDecoder(nn.Cell):
                 word = ops.multiply(
                     word, labels[:, i]
                 )
-            
 
         return word_probs
 
@@ -385,12 +377,6 @@ class CANHead(nn.Cell):
         counting_preds = (counting_preds1 + counting_preds2) / 2
 
         word_probs = self.decoder(cnn_features, labels, counting_preds, images_mask)
-        # print("can head output dtype")
-        # print(x.dtype)
-        # print(word_probs.dtype)
-        # print(counting_preds.dtype)
-        # print(counting_preds1.dtype)
-        # print(counting_preds2.dtype)
 
         preds=dict()
         preds["word_probs"]=word_probs
