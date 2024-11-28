@@ -20,9 +20,9 @@ from mindspore import mint
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
 
-from mindocr import build_model
-from mindocr.utils.logger import set_logger
-from mindocr.utils.visualize import show_imgs
+from can import build_model
+from can.utils.logger import set_logger
+from can.utils.visualize import show_imgs
 
 # map algorithm name to model name (which can be checked by `mindocr.list_models()`)
 # NOTE: Modify it to add new model for inference.

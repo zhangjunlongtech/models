@@ -1,9 +1,6 @@
 import mindspore as ms
 import mindspore.ops as ops
-import mindspore.nn as nn
-import math
-import numpy as np
-from mindocr import build_loss
+from can import build_loss
 
 ms.set_context(mode=ms.PYNATIVE_MODE, pynative_synchronize=True)
 
@@ -45,8 +42,8 @@ def test_can_loss():
     # Call the forward method
     loss_dict = loss_fn(preds, *batch)
 
-    # Output loss and verify
-    assert isinstance(loss_dict, (int, float)), f"The variable {loss_dict} is not a number."
+    assert isinstance(loss_dict, ms.Tensor), f"loss_dict is incorrect."
+    assert isinstance(loss_dict.item(), (int, float)), f"The variable {loss_dict} is not a number."
 
 
 if __name__ == "__main__":

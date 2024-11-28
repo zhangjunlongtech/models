@@ -10,8 +10,8 @@ system:
   ckpt_max_keep: 5
 
 common:
-  character_dict_path: &character_dict_path /home/nginx/work/zhangjunlong/mindocr_models/mindocr/utils/dict/latex_symbol_dict.txt
-  ckpt_load_path: &ckpt_load_path /home/nginx/work/zhangjunlong/mindocr_models/configs/can_params_from_paddle.ckpt
+  character_dict_path: &character_dict_path /home/nginx/work/zhangjunlong/CAN/can/utils/dict/latex_symbol_dict.txt
+  ckpt_load_path: &ckpt_load_path /home/nginx/work/zhangjunlong/CAN/configs/can_params_from_paddle.ckpt
   num_classes: &num_classes 111 # num_chars_in_dict + 1
   max_text_len: &max_text_len 36
   infer_mode: &infer_mode False
@@ -35,7 +35,7 @@ model:
     out_channels: 111
     ratio: 16
     attdecoder: 
-      is_train: True #修改
+      is_train: False #修改
       input_size: 256
       hidden_size: 256
       encoder_out_channel: 684

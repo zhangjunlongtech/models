@@ -13,12 +13,12 @@ from addict import Dict
 import mindspore as ms
 from mindspore.communication import get_group_size, get_rank, init
 
-from mindocr.data import build_dataset
-from mindocr.metrics import build_metric
-from mindocr.models import build_model
-from mindocr.postprocess import build_postprocess
-from mindocr.utils.evaluator import Evaluator
-from mindocr.utils.logger import set_logger
+from can.data import build_dataset
+from can.metrics import build_metric
+from can.models import build_model
+from can.postprocess import build_postprocess
+from can.utils.evaluator import Evaluator
+from can.utils.logger import set_logger
 from tools.arg_parser import parse_args_and_config
 
 logger = logging.getLogger("mindocr.eval")

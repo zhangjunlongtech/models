@@ -1,20 +1,22 @@
-import logging
-import os
-import random
-from typing import List, Union
-
-import numpy as np
-from scipy.io import loadmat
-
 import sys
-import mindocr
-import mindspore as ms
-from mindocr.data.transforms.transforms_factory import create_transforms, run_transforms
-from mindocr.data import build_dataset
+from pathlib import Path
 
+import mindspore as ms
+from can.data.transforms.transforms_factory import create_transforms, run_transforms
+from can.data import build_dataset
 
 sys.path.append(".")
 ms.set_context(mode=ms.PYNATIVE_MODE, pynative_synchronize=True)
+
+cur_dir = Path(__file__).resolve().parent
+test_file_dir = cur_dir / "test_files"
+
+#This specifies the address of the data set used by the test case, which runs the test directly
+TEST_FILE_OCR = str(test_file_dir)
+DICT_PATHS_OCR = str(test_file_dir / "dict.txt")
+LABEL_PATHS_OCR = str(test_file_dir / "label.txt")
+IMG_PATHS_OCR = str(test_file_dir / "test_img/test_img.jpg")
+IMG_FILE_PATHS = str(test_file_dir / "test_img")
 
 
 def test_transform_pipeline():
@@ -49,14 +51,14 @@ def test_transform_pipeline():
             {"CANLabelEncode":{
                 "task": "train",
                 "lower": False,
-                "character_dict_path": "/home/nginx/work/zhangjunlong/mindocr_mm/mindocr/utils/dict/latex_symbol_dict.txt"
+                "character_dict_path": DICT_PATHS_OCR
                 }
             },
         ]
 
     data = {
-        "img_path": "/home/nginx/work/zhangjunlong/mindocr_models/mypic2.jpg",
-        "label": "\sqrt { a } = 2 ^ { - n } \sqrt { 4 ^ { n } a }"
+        "img_path": IMG_PATHS_OCR,
+        "label": "S = ( \sum _ { i = 1 } ^ { n } \theta _ { i } - ( n - 2 ) \pi ) r ^ { 2 }"
     }
 
     global_config = dict(is_train=True, use_minddata=False)
@@ -81,9 +83,9 @@ def test_train_data_config():
 
     data_config = {
         "type": "RecDataset",
-        "dataset_root": "/home/nginx/work/zhangjunlong/mindocr_mm/myds",
-        "data_dir": "/home/nginx/work/zhangjunlong/mindocr_mm/myds/training",
-        "label_file": "/home/nginx/work/zhangjunlong/mindocr_mm/myds/gt_training.txt",
+        "dataset_root": TEST_FILE_OCR,
+        "data_dir": IMG_FILE_PATHS,
+        "label_file": LABEL_PATHS_OCR,
         "sample_ratio": 1.0,
         "shuffle": False,
         "transform_pipeline": [
@@ -108,7 +110,7 @@ def test_train_data_config():
             {"CANLabelEncode":{
                 "task": "train",
                 "lower": False,
-                "character_dict_path": "/home/nginx/work/zhangjunlong/mindocr_mm/mindocr/utils/dict/latex_symbol_dict.txt"
+                "character_dict_path": DICT_PATHS_OCR
                 }
             },
         ],
@@ -158,9 +160,9 @@ def test_eval_data_config():
 
     data_eval_config = {
         "type": "RecDataset",
-        "dataset_root": "/home/nginx/work/zhangjunlong/mindocr_mm/myds",
-        "data_dir": "/home/nginx/work/zhangjunlong/mindocr_mm/myds/training",
-        "label_file": "/home/nginx/work/zhangjunlong/mindocr_mm/myds/gt_training.txt",
+        "dataset_root": TEST_FILE_OCR,
+        "data_dir": IMG_FILE_PATHS,
+        "label_file": LABEL_PATHS_OCR,
         "sample_ratio": 1.0,
         "shuffle": False,
         "transform_pipeline": [
@@ -185,7 +187,7 @@ def test_eval_data_config():
             {"CANLabelEncode":{
                 "task": "eval",
                 "lower": False,
-                "character_dict_path": "/home/nginx/work/zhangjunlong/mindocr_mm/mindocr/utils/dict/latex_symbol_dict.txt"
+                "character_dict_path": DICT_PATHS_OCR
                 }
             },
         ],
@@ -220,6 +222,6 @@ if __name__ == "__main__":
         Select the test function as needed
     """
 
-    # test_transform_pipeline()
-    test_train_data_config()
+    test_transform_pipeline()
+    # test_train_data_config()
     # test_eval_data_config()

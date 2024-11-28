@@ -5,7 +5,7 @@ import sys
 __dir__ = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.abspath(os.path.join(__dir__, "../../../")))
 
-from mindocr.data.transforms import create_transforms, run_transforms
+from can.data.transforms import create_transforms, run_transforms
 
 _logger = logging.getLogger("mindocr")
 

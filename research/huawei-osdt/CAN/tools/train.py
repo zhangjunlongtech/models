@@ -19,23 +19,23 @@ from addict import Dict
 import mindspore as ms
 from mindspore.communication import get_group_size, get_rank, init
 
-from mindocr.data import build_dataset
-from mindocr.losses import build_loss
-from mindocr.metrics import build_metric
-from mindocr.models import build_model
-from mindocr.optim import create_group_params, create_optimizer
-from mindocr.postprocess import build_postprocess
-from mindocr.scheduler import create_scheduler
-from mindocr.utils.callbacks import EvalSaveCallback
-from mindocr.utils.checkpoint import resume_train_network
-from mindocr.utils.ema import EMA
-from mindocr.utils.logger import set_logger
-from mindocr.utils.loss_scaler import get_loss_scales
-from mindocr.utils.model_wrapper import NetWithLossWrapper
-from mindocr.utils.seed import set_seed
-from mindocr.utils.train_step_wrapper import TrainOneStepWrapper
+from can.data import build_dataset
+from can.losses import build_loss
+from can.metrics import build_metric
+from can.models import build_model
+from can.optim import create_group_params, create_optimizer
+from can.postprocess import build_postprocess
+from can.scheduler import create_scheduler
+from can.utils.callbacks import EvalSaveCallback
+from can.utils.checkpoint import resume_train_network
+from can.utils.ema import EMA
+from can.utils.logger import set_logger
+from can.utils.loss_scaler import get_loss_scales
+from can.utils.model_wrapper import NetWithLossWrapper
+from can.utils.seed import set_seed
+from can.utils.train_step_wrapper import TrainOneStepWrapper
 
-logger = logging.getLogger("mindocr.train")
+logger = logging.getLogger("can.train")
 
 
 def main(cfg):
@@ -68,7 +68,7 @@ def main(cfg):
 
         # create logger, only rank0 log will be output to the screen
         set_logger(
-            name="mindocr",
+            name="can",
             output_dir=cfg.train.ckpt_save_dir,
             rank=0,
             log_level=eval(cfg.system.get("log_level", "logging.INFO")),

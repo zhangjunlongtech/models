@@ -1,15 +1,11 @@
 import sys
-import mindocr
 import math
 import mindspore as ms
 
-from mindocr.models.base_model import BaseModel
-from mindocr.models.backbones import build_backbone
-from mindocr.models.heads import build_head
-from mindocr.models import build_model
+from can.models.backbones import build_backbone
+from can.models.heads import build_head
+from can.models import build_model
 from mindspore import ops
-from mindspore import Tensor, ops
-import numpy as np
 
 sys.path.append(".")
 ms.set_context(mode=ms.PYNATIVE_MODE, pynative_synchronize=True, jit_config={"jit_level": "O0"})
@@ -78,7 +74,8 @@ def test_can_model():
 
     # basemodel unit test
     model_config.pop("neck")
-    model = build_model(model_config, ckpt_load_path="/home/nginx/work/zhangjunlong/mindocr_mm/tests/ut/ut_can/can_params_from_paddle.ckpt")
+    # model = build_model(model_config, ckpt_load_path=ckpt_load_path)
+    model = build_model(model_config)
     input = list()
     input.append(input_tensor)
     input.append(images_mask)
