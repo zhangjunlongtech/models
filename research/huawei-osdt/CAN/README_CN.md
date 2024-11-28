@@ -25,7 +25,7 @@ CAN是具有一个弱监督计数模块的注意力机制编码器-解码器手�
 针对于此，作者设计了一个弱监督计数模块，该模块可以在没有符号级位置注释的情况下预测每个符号类的数量，然后将其插入到典型的基于注意的HMER编解码器模型中。这种做法主要基于以下两方面的考虑：1、符号计数可以隐式地提供符号位置信息，这种位置信息可以使得注意力更加准确。2、符号计数结果可以作为额外的全局信息来提升公式识别的准确率。
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/miss_word.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/miss_word.png" width=640 />
 </p>
 <p align="center">
   <em> 手写数学公式识别算法对比 [<a href="#参考文献">1</a>] </em>
@@ -34,7 +34,7 @@ CAN是具有一个弱监督计数模块的注意力机制编码器-解码器手�
 CAN模型由主干特征提取网络、多尺度计数模块（MSCM）和结合计数的注意力解码器（CCAD）构成。主干特征提取通过采用DenseNet得到特征图，并将特征图输入MSCM，得到一个计数向量（Counting Vector），该计数向量的维度为1*C，C即公式词表大小，然后把这个计数向量和特征图一起输入到CCAD中，最终输出公式的latex。
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/total_process.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/total_process.png" width=640 />
 </p>
 <p align="center">
   <em> 整体模型结构 [<a href="#参考文献">1</a>] </em>
@@ -43,7 +43,7 @@ CAN模型由主干特征提取网络、多尺度计数模块（MSCM）和结合�
 多尺度计数模MSCM块旨在预测每个符号类别的数量，其由多尺度特征提取、通道注意力和池化算子组成。由于书写习惯的不同，公式图像通常包含各种大小的符号。单一卷积核大小无法有效处理尺度变化。为此，首先利用了两个并行卷积分支通过使用不同的内核大小（设置为 3×3 和 5×5）来提取多尺度特征。在卷积层之后，采用通道注意力来进一步增强特征信息。
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/MSCM.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/MSCM.png" width=640 />
 </p>
 <p align="center">
   <em> MSCM多尺度计数模块 [<a href="#参考文献">1</a>] </em>
@@ -52,7 +52,7 @@ CAN模型由主干特征提取网络、多尺度计数模块（MSCM）和结合�
 结合计数的注意力解码器：为了加强模型对于空间位置的感知，使用位置编码表征特征图中不同空间位置。另外，不同于之前大部分公式识别方法只使用局部特征进行符号预测的做法，在进行符号类别预测时引入符号计数结果作为额外的全局信息来提升识别准确率。
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/CCAD.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/CCAD.png" width=640 />
 </p>
 <p align="center">
   <em> 结合计数的注意力解码器CCAD [<a href="#参考文献">1</a>] </em>
@@ -90,7 +90,7 @@ Python  /tools/predict_can.py   --image_dir {path_to_img} \
 - 其中`--image_dir`为图像地址，`rec_model_dir`为权重文件地址，`rec_char_dict_path`为识别字典地址，在进行模型推理时需要根据实际地址修改
 - 需要注意预测图像为**黑底白字**，即手写公式部分为白色，背景为黑色的图片。
 
-![测试图片样例](https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/101_user0.jpg)
+![测试图片样例](https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/101_user0.jpg)
 
 执行命令后，上面图像的预测结果（识别的文本）会打印到屏幕上，示例如下：
 ```shell

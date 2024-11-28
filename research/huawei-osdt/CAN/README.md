@@ -25,7 +25,7 @@ CAN is an attention-mechanism encoder-decoder handwriting mathematical formula r
 To this end, the authors design a weakly supervised count module that can predict the number of each symbol class without symbol-level location annotations, and then plug this into a typical attention-based HMER codec model. This approach is mainly based on the following two considerations: 1. Symbol counting can implicitly provide symbol location information, which can make attention more accurate. 2. Symbol counting results can be used as additional global information to improve the accuracy of formula recognition.
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/miss_word.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/miss_word.png" width=640 />
 </p>
 <p align="center">
   <em> Comparison of handwritten mathematical formula recognition algorithms [<a href="#参考文献">1</a>] </em>
@@ -33,7 +33,7 @@ To this end, the authors design a weakly supervised count module that can predic
 
 The CAN model consists of a backbone feature extraction network, a multi-scale counting module (MSCM) and an attentional decoder (CCAD) that combines counting. Trunk feature extraction uses DenseNet to obtain the feature map, and inputting the feature map into MSCM to obtain a Counting Vector. The dimension of the counting vector is 1*C, where C is the size of the formula word list. Then, the counting vector and the feature map are input into CCAD together. Final output formula of latex.
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/total_process.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/total_process.png" width=640 />
 </p>
 <p align="center">
   <em> Global model structure [<a href="#参考文献">1</a>] </em>
@@ -42,7 +42,7 @@ The CAN model consists of a backbone feature extraction network, a multi-scale c
 The multi-scale counting module MSCM block is designed to predict the number of each symbol class, which consists of multi-scale feature extraction, channel attention and pooling operators. Due to differences in writing habits, formula images often contain symbols of various sizes. The size of a single convolution kernel cannot handle scale changes efficiently. To do this, two parallel convolution branches are first utilized to extract multi-scale features by using different kernel sizes (set to 3×3 and 5×5). After the convolution layer, channel attention is used to further enhance the feature information.
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/MSCM.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/MSCM.png" width=640 />
 </p>
 <p align="center">
   <em> MSCM multi-scale counting module [<a href="#参考文献">1</a>] </em>
@@ -51,7 +51,7 @@ The multi-scale counting module MSCM block is designed to predict the number of 
 Attention decoder combined with counting: In order to enhance the perception of spatial position of the model, location coding is used to represent different spatial positions in the feature map. In addition, unlike most previous formula recognition methods which only use local features for symbol prediction, symbol counting results are introduced as additional global information to improve the recognition accuracy.
 
 <p align="center">
-  <img src="https://temp-data.obs.cn-central-221.ovaijisuan.com/mindocr_material/CCAD.png" width=640 />
+  <img src="https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/CCAD.png" width=640 />
 </p>
 <p align="center">
   <em> Combined with counting attention decoder CCAD [<a href="#参考文献">1</a>] </em>
@@ -89,7 +89,7 @@ Python  /tools/predict_can.py   --image_dir {path_to_img} \
 - Where `--image_dir` is the image address, `rec_model_dir` is the weight file address, `rec_char_dict_path` is the address of the identification dictionary, which needs to be modified according to the actual address during model inference
 - It should be noted that the predicted image is **white characters** on black background, that is, the handwritten formula part is white and the background is black.
 
-![Sample test picture](https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/101_user0.jpg)
+![Sample test picture](https://raw.githubusercontent.com/zhangjunlongtech/Material/refs/heads/main/CAN/101_user0.jpg)
 
 After executing the command, the predicted result of the above image (the recognized text) is printed on the screen, as shown in the following example:
 ```shell
